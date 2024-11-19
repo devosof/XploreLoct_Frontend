@@ -1,0 +1,11 @@
+.phone-input {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  
+  .phone-code {
+    color: #666;
+    font-size: 14px;
+    min-width: 50px;
+  }

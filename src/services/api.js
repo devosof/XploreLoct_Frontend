@@ -6,6 +6,7 @@ const api = axios.create({
   withCredentials: true,
   headers: {
     'Accept': 'application/json',
+    'Content-Type': 'application/json',
   }
 });
 
@@ -29,12 +30,19 @@ api.interceptors.response.use(
   async (error) => {
     const originalRequest = error.config;
 
+    if (originalRequest.url === '/api/users/logout') {
+      localStorage.removeItem('accessToken');
+      window.location.href = '/login';
+      return Promise.reject(error);
+    }
+
     if (error.response?.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
 
       try {
         const { data } = await api.post('/api/users/refresh-token');
-        localStorage.setItem('accessToken', data.accessToken);
+        console.log(data);
+        localStorage.setItem('accessToken', data.data.accessToken);
         originalRequest.headers.Authorization = `Bearer ${data.accessToken}`;
         return api(originalRequest);
       } catch (refreshError) {
@@ -55,7 +63,19 @@ export const auth = {
   login: (credentials) =>
     api.post('/api/users/login', credentials),
   register: (userData) => api.post('/api/users/register', userData),
-  logout: () => api.post('/api/users/logout'),
+  logout: async () => {
+    try {
+      await api.post('/api/users/logout');
+      localStorage.removeItem('accessToken');
+      // Clear refresh token cookie
+      document.cookie = "refreshToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+    } catch (error) {
+      localStorage.removeItem('accessToken');
+      throw error;
+    } finally {
+      window.location.href = '/login';
+    }
+  },
   refreshToken: () => api.post('/api/users/refresh-token'),
 };
 

@@ -64,6 +64,7 @@ export default function useAuth() {
     isAuthenticated: !!user,
     isOrganizer: hasRole('organizer'),
     isSpeaker: hasRole('speaker'),
+    isAdmin: hasRole('admin'),
     hasRole
   };
 }

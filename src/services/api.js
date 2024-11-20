@@ -111,6 +111,12 @@ export const users = {
   getProfile: () => api.get('/api/users/profile'),
   updateProfile: (profileData) => api.patch('/api/users/profile/update', profileData),
   getInterestedEvents: () => api.get('/api/users/interested-events'),
+  updateProfileWithAvatar: (formData) => 
+    api.patch('/api/users/profile/update', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    }),
 };
 
 // Organizer endpoints
@@ -123,7 +129,10 @@ export const organizers = {
 
 // Speaker endpoints
 export const speakers = {
-  register: (speakerData) => api.post('/api/speakers/register', speakerData),
+  register: (speakerData) => {
+    console.log('Speaker registration data:', speakerData);
+    return api.post('/api/speakers/register', speakerData);
+  },
 };
 
 // Admin endpoints

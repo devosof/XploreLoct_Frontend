@@ -45,6 +45,7 @@ export default function UpdateEvent() {
 
         const event = eventResponse.data.data;
         const speakers = speakersResponse.data.data || [];
+        console.log('Speakers:', speakers);
         
         setAvailableSpeakers(speakers);
         
@@ -422,36 +423,48 @@ export default function UpdateEvent() {
           <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
             {availableSpeakers.length > 0 ? (
               availableSpeakers.map(speaker => (
-                <label 
-                  key={speaker.speaker_id}
-                  className="flex items-center space-x-3"
+                <div
+                  key={speaker.speaker_id} 
+                  className="col-span-1 bg-white rounded-lg shadow-sm p-4 border border-gray-200 hover:shadow-md transition-shadow"
                 >
-                  <input
-                    type="checkbox"
-                    checked={eventData.speakers.includes(speaker.speaker_id)}
-                    onChange={(e) => {
-                      setEventData(prev => ({
-                        ...prev,
-                        speakers: e.target.checked
-                          ? [...prev.speakers, speaker.speaker_id]
-                          : prev.speakers.filter(id => id !== speaker.speaker_id)
-                      }));
-                    }}
-                    className="h-4 w-4 text-green-600 focus:ring-green-500 border-gray-300 rounded"
-                  />
-                  <div className="flex items-center space-x-2">
-                    {speaker.avatar && (
-                      <img
-                        src={speaker.avatar}
-                        alt={speaker.name}
-                        className="h-8 w-8 rounded-full object-cover"
-                      />
-                    )}
-                    <span className="text-sm font-medium text-gray-700">
-                      {speaker.name}
-                    </span>
+                  <div className="flex items-start space-x-4">
+                    <input
+                      type="checkbox"
+                      checked={eventData.speakers.includes(speaker.speaker_id)}
+                      onChange={(e) => {
+                        setEventData(prev => ({
+                          ...prev,
+                          speakers: e.target.checked
+                            ? [...prev.speakers, speaker.speaker_id]
+                            : prev.speakers.filter(id => id !== speaker.speaker_id)
+                        }));
+                      }}
+                      className="h-5 w-5 mt-1 text-green-600 focus:ring-green-500 border-gray-300 rounded"
+                    />
+                    <div className="flex-1">
+                      <div className="flex items-center space-x-3 mb-2">
+                        <img
+                          src={speaker?.avatar || `https://ui-avatars.com/api/?name=${speaker.name}`}
+                          alt={speaker.name}
+                          className="h-12 w-12 rounded-full object-cover border-2 border-green-100"
+                        />
+                        <div>
+                          <h4 className="text-base font-semibold text-gray-900">
+                            {speaker.name}
+                          </h4>
+                          <p className="text-sm text-gray-500">
+                            {speaker.profession || 'Speaker'}
+                          </p>
+                        </div>
+                      </div>
+                      {speaker.bio && (
+                        <p className="text-sm text-gray-600 line-clamp-3">
+                          {speaker.bio}
+                        </p>
+                      )}
+                    </div>
                   </div>
-                </label>
+                </div>
               ))
             ) : (
               <p className="text-gray-500 col-span-full">No speakers available</p>
